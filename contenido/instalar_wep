@@ -1,0 +1,86 @@
+#!/bin/bash
+ve="\033[1;32m";am="\033[1;33m";ver="\033[1;31m";az="\033[1;36m";f="\033[0m"
+
+meu_ip () {
+MEU_IP=$(ip addr | grep 'inet' | grep -v inet6 | grep -vE '127\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | grep -o -E '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | head -1)
+MEU_IP2=$(wget -qO- ipv4.icanhazip.com)
+[[ "$MEU_IP" != "$MEU_IP2" ]] && ip="$MEU_IP2" || ip="$MEU_IP"
+}
+
+apt-get install figlet -y > /dev/null 2>&1
+meu_ip
+echo -e "${az}"
+figlet MSC PERU
+echo -e "${f}"
+sleep 2
+echo
+echo -e "${ver}            +++++ ATENCION +++++${am}     
+TODAS LAS CONTRASEÑAS COLOCAR SIEMPRE LA MISMA${f}"
+read -p "Enter, Para continuar!"
+apt-get install php5 libapache2-mod-php5 php5-mcrypt -y
+apt-get install mysql-server php5-mysql -y
+mysql_install_db
+echo ""
+echo -e "${am}Siempre que solicita${ver}[Y/N]${am}elija la opcion${ver}Y${am} y de ${ve}OK.${am} para todo que pide.
+...
+${am}y proximo procedimiento de instalacion te pedira una contraseña
+y digite la contraseña ${ver}Y${f}"
+read -p "Enter, Para continuar!"
+mysql_secure_installation
+echo -e "${az}ESPERE ESTA INSTALANDO${f}"
+sleep 2
+apt-get install phpmyadmin -y
+php5enmod mcrypt
+service apache2 restart
+echo ""
+stty -echo
+tput setaf 7 ; tput bold ; read -p "Digite la misma contraseña (MySQL): " var7 ; tput sgr0
+echo ""
+stty echo ; echo
+mysql -h localhost -u root -p$var7 -e "CREATE DATABASE adm"
+echo -e "${ver}ATENCION - USUARIO A SEGUIR ES PERSONAL NO DIVULGUE ${f}"
+echo ""
+echo -e "${am}Ahora vamos a poner un USER y CONTRASEÑA de acceso a la página de carga${ve}"
+	read -p "USER: " var2
+	read -p "CONTRASEÑA: " var3
+	echo -ne "${f}"
+
+cd /var/www/
+   rm -rf index.html > /dev/null 2>&1
+   cp /etc/adm-lite/mscwep.zip /var/www/
+   unzip mscwep.zip > /dev/null 2>&1
+   rm -rf mscwep.zip > /dev/null 2>&1
+   chmod -R 777 /var/www/adm > /dev/null 2>&1
+sed -i "s;123;$var7;g" /var/www/adm/system/seguranca.php > /dev/null 2>&1
+
+cd /var/www/html/
+   rm -rf index.html > /dev/null 2>&1
+   cp /etc/adm-lite/mscwep.zip /var/www/html/
+   unzip mscwep.zip > /dev/null 2>&1
+   rm -rf mscwep.zip > /dev/null 2>&1 
+   chmod -R 777 /var/www/html/adm > /dev/null 2>&1
+sed -i "s;123;$var7;g" /var/www/html/adm/system/seguranca.php > /dev/null 2>&1
+
+[[ ! -d /var/www/temp ]] && mkdir /var/www/temp
+cd /var/www/temp && cp /etc/adm-lite/dados.zip /var/www/temp/
+unzip dados.zip > /dev/null 2>&1
+
+sed -i "s;adm123;$var2;g" ./banco_de_dados.sql > /dev/null 2>&1
+sed -i "s;adm4321;$var3;g" ./banco_de_dados.sql > /dev/null 2>&1
+
+mysql -h localhost -u root -p$var7 adm < banco_de_dados.sql > /dev/null 2>&1
+rm -rf /var/www/temp
+
+echo -e "${am}PANEL DE UPLOAD DE EHI INSTALADO PARA ENTRAR EN SU PANEL DE ACCESSO
+${az}-------------------------------------------------------------------
+${ver}Url: ${ve}$ip:/iniciar.php
+${am}usuario: ${ve}$var2
+${am}contraseña: ${ve}$var3
+${am}LINK DE PAGINA INICIAL ${ve}( $ip: )
+${az}-------------------------------------------------------------------${f}"
+echo -e "${am}"
+read -p "ENTER, Para continuar" naoa
+sleep 2
+echo -e "${f}"
+exit
+
