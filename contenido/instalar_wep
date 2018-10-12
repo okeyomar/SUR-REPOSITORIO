@@ -10,7 +10,7 @@ MEU_IP2=$(wget -qO- ipv4.icanhazip.com)
 apt-get install figlet -y > /dev/null 2>&1
 meu_ip
 echo -e "${az}"
-figlet MSC PERU
+figlet ADICTOSUR
 echo -e "${f}"
 sleep 2
 echo

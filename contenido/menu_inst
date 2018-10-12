@@ -1116,7 +1116,7 @@ return 0
 
 painel_upload () {
 echo -e "$barra"
-echo -e "${cor[2]} ("Desea Instalar Panel De descargas msc?")"
+echo -e "${cor[2]} ("Desea Instalar Panel De descargas ADICTOSUR?")"
 echo -e "$barra"
 read -p " [ s | n ]: " up_load
 echo -e "$barra"
